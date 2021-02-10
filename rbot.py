@@ -78,88 +78,88 @@ for comment in reddit.subreddit("edefine").comments(limit = None):
             activeFlairs.append(int(comment.author_flair_text))
 
 
-# # Removes the inactive
-# # One is for if there is no list of active users from the previous culling, the other is for if there is
-# if not os.path.exists("activeUsers.json"):
-#     contributors = reddit.subreddit("edefine").contributor()
-#     for contributor, i in zip(contributors,range(len(contributors))):
-#         if contributor not in activeUsers and contributor not in mods:
-#             # reddit.subreddit("edefine").contributor.remove(contributor)
-#             culled.append(contributor.name)
-# else:
-#     for contributor, i in zip(data["activeUsers"],range(len(data["activeUsers"]))):
-#         if contributor not in activeUsers and contributor not in mods:
-#             # reddit.subreddit("edefine").contributor.remove(contributor)
-#             culled.append({"name":contributor,"number":i+1})
+# Removes the inactive
+# One is for if there is no list of active users from the previous culling, the other is for if there is
+if not os.path.exists("activeUsers.json"):
+    contributors = reddit.subreddit("edefine").contributor()
+    for contributor, i in zip(contributors,range(len(contributors))):
+        if contributor not in activeUsers and contributor not in mods:
+            # reddit.subreddit("edefine").contributor.remove(contributor)
+            culled.append(contributor.name)
+else:
+    for contributor, i in zip(data["activeUsers"],range(len(data["activeUsers"]))):
+        if contributor not in activeUsers and contributor not in mods:
+            # reddit.subreddit("edefine").contributor.remove(contributor)
+            culled.append({"name":contributor,"number":i+1})
 
 
 
-# # Sets flairs
-# # for i in range(len(activeFlairs)):
-#     # reddit.subreddit("edefine").flair.set(activeUsers[i],str(i+1))
-#     # print(activeUsers[i], activeFlairs[i],"->",i+1)
+# Sets flairs
+for i in range(len(activeFlairs)):
+    reddit.subreddit("edefine").flair.set(activeUsers[i],str(i+1))
+    print(activeUsers[i], activeFlairs[i],"->",i+1)
 
 
 
-# # Creates submissions saying who was culled and who survived
-# if os.path.exists("activeUsers.json"):
-#     message = str(culled[0]['number'])+": "+culled[0]['name']
+# Creates submissions saying who was culled and who survived
+if os.path.exists("activeUsers.json"):
+    message = str(culled[0]['number'])+": "+culled[0]['name']
 
-#     for user in culled[1:]:
-#         message += "\n\n{}: {}".format(user['number'],user['name'])
+    for user in culled[1:]:
+        message += "\n\n{}: {}".format(user['number'],user['name'])
 
-# else:
-#     message = culled[0]
-#     for user in culled[1:]:
-#         message +="\n\n"+user
+else:
+    message = culled[0]
+    for user in culled[1:]:
+        message +="\n\n"+user
 
-# # print(message)
-# # reddit.subreddit("edefine").submit("The Culled", selftext = message)
+# print(message)
+# reddit.subreddit("edefine").submit("The Culled", selftext = message)
 
-# message = "1: "+activeUsers[0]
+message = "1: "+activeUsers[0]
 
-# for i in range(1,len(activeUsers)):
-#     message += "\n\n{}: {}".format(i+1,activeUsers[i])
+for i in range(1,len(activeUsers)):
+    message += "\n\n{}: {}".format(i+1,activeUsers[i])
 
-# # print(message)
-# # reddit.subreddit("edefine").submit("Survivors", selftext = message)
-
-
-# # Records current active users at time of culling
-# # data['activeUsers'] = activeUsers
-# # data['mods'] = mods
-
-# # with open('activeUsers.json', 'w') as file:
-# #         json.dump(data, file, indent = 4)
+# print(message)
+reddit.subreddit("edefine").submit("Survivors", selftext = message)
 
 
-# # Creates Active User and Culling Logs
-# text = time.ctime(time.time())+"\nMods:"
-# for mod in mods:
-#     text+=" "+mod
-# for i in range(len(activeUsers)):
-#     text += "\n{}: {}".format(i+1,activeUsers[i])
+# Records current active users at time of culling
+data['activeUsers'] = activeUsers
+data['mods'] = mods
 
-# if not os.path.exists("ActiveUsersLogs"):
-#     os.mkdir(os.path.join(rootdir,"ActiveUsersLogs"))
-#     print("ActiveUsersLogs directory created")
+with open('activeUsers.json', 'w') as file:
+        json.dump(data, file, indent = 4)
 
-# with open('ActiveUsersLogs/Active Users {}.txt'.format(1+len(os.listdir(os.path.join(rootdir,"ActiveUsersLogs")))),'a') as file:
-#     file.write(text)
+
+# Creates Active User and Culling Logs
+text = time.ctime(time.time())+"\nMods:"
+for mod in mods:
+    text+=" "+mod
+for i in range(len(activeUsers)):
+    text += "\n{}: {}".format(i+1,activeUsers[i])
+
+if not os.path.exists("ActiveUsersLogs"):
+    os.mkdir(os.path.join(rootdir,"ActiveUsersLogs"))
+    print("ActiveUsersLogs directory created")
+
+with open('ActiveUsersLogs/Active Users {}.txt'.format(1+len(os.listdir(os.path.join(rootdir,"ActiveUsersLogs")))),'a') as file:
+    file.write(text)
     
 
 
-# text = time.ctime(time.time())
-# if os.path.exists('activeUsers.json'):
-#     for user in culled:
-#         text += "\n{}: {}".format(user['number'],user['name'])
-# else:
-#     for user in culled:
-#         text += "\n"+user
+text = time.ctime(time.time())
+if os.path.exists('activeUsers.json'):
+    for user in culled:
+        text += "\n{}: {}".format(user['number'],user['name'])
+else:
+    for user in culled:
+        text += "\n"+user
 
-# if not os.path.exists("CullingLogs"):
-#     os.mkdir(os.path.join(rootdir,"CullingLogs"))
-#     print("CullingLogs directory created")
+if not os.path.exists("CullingLogs"):
+    os.mkdir(os.path.join(rootdir,"CullingLogs"))
+    print("CullingLogs directory created")
 
-# with open('CullingLogs/Culled {}.txt'.format(1+len(os.listdir(os.path.join(rootdir,"CullingLogs")))),'a') as file:
-#     file.write(text)
+with open('CullingLogs/Culled {}.txt'.format(1+len(os.listdir(os.path.join(rootdir,"CullingLogs")))),'a') as file:
+    file.write(text)
